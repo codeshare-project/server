@@ -1,0 +1,11 @@
+name: Pterodactyl
+on: [push]
+jobs:
+  refresh-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restart the Pterodactyl container
+        uses: JamesIves/fetch-api-data-action@v2
+        with:
+          endpoint: ${{ secrets.PTERO_ENDPOINT }}
+          configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer ${{ secrets.PTERO_API_KEY }}"} }'

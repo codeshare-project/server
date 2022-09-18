@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model code {
+  id          Int       @id @default(autoincrement())
+  userId      Int?
+  title       String?   @db.VarChar(50)
+  description String?   @db.Text
+  slug        String    @unique(map: "slug") @db.VarChar(10)
+  code        String    @db.MediumText
+  language    Int
+  private     Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @db.DateTime(0)
+  users       users?    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "code_ibfk_1")
+  languages   languages @relation(fields: [language], references: [id], onUpdate: Restrict, map: "languages_ibfk_2")
+
+  @@index([language], map: "language")
+  @@index([userId], map: "userId")
+}
+
+model languages {
+  id       Int    @id @default(autoincrement())
+  language String @db.VarChar(20)
+  code     code[]
+}
+
+model settings {
+  key   String  @id @unique(map: "key") @db.VarChar(20)
+  value String? @db.VarChar(255)
+}
+
+model users {
+  id       Int        @id @default(autoincrement())
+  username String     @unique @db.VarChar(20)
+  password String     @db.VarChar(64)
+  role     users_role @default(USER)
+  code     code[]
+}
+
+enum users_role {
+  ADMIN
+  USER
+}
