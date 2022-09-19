@@ -12,7 +12,7 @@
     "start": "node dist/server.js NODE_ENV=production",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push --skip-generate"
   },
   "repository": {
     "type": "git",
