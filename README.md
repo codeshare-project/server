@@ -3,7 +3,7 @@
 ![Top language](https://img.shields.io/github/languages/top/codeshare-project/server)
 ![Last commit](https://img.shields.io/github/last-commit/codeshare-project/server)
 
-![CodeShare banner](https://static.devioo.com/Images/CodeShare/Banner%20Transparent.png)
+![CodeShare banner](https://i.imgur.com/8KSgw8s.png)
 <h1 align="center">🪄 Server</h1>
 <h3 align="center">CodeShare backend, made with Fastify + Typescript 💙</h3>
 <hr>
