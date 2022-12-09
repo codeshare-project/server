@@ -61,7 +61,7 @@ export default async function securityController(fastify: FastifyInstance) {
                     password: hashed
                 }
             })
-            .then((users) => {
+            .then((users: User[]) => {
                 if (users.length === 0) return reply.status(401).send({ error: 'Invalid username or password' });
 
                 let token = fastify.jwt.sign({
@@ -76,7 +76,7 @@ export default async function securityController(fastify: FastifyInstance) {
 
                 return reply.status(200).send({ id: users[0].id, token });
             })
-            .catch((err) => {
+            .catch((err: Error) => {
                 logger.error(err);
                 return reply.status(500).send({ error: 'Error' });
             });
