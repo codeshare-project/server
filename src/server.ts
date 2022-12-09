@@ -97,6 +97,7 @@ try {
     logger.info(
         `Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`
     );
+    if (process.env.NODE_ENV === 'production') console.log(`Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`);
 } catch (err: unknown) {
     if (process.env.NODE_ENV === 'development') {
         logger.error(err);
