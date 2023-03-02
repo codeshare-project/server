@@ -8,19 +8,25 @@ import winston from 'winston';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 
-// Verify all environment variables are set
-const requiredEnvVars = [
-    'NODE_ENV',
-    'DATABASE_URL',
-    'SITE_NAME',
-    'SITE_NAME_SHORT'
-];
-
-for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar]) {
-        throw new Error(`Environment variable ${envVar} is not set`);
+// Verify that the environment variables are set
+const requiredVariables = ['NODE_ENV', 'DATABASE_URL', 'SERVER_PORT', 'SITE_NAME', 'SITE_NAME_SHORT']
+requiredVariables.forEach(variable => {
+    if (!process.env[variable]) {
+        throw new Error(`Environment variable ${variable} is not set`)
     }
+})
+
+const optionalVariables: { [key: string]: string } = {
+    'SERVER_HOST': '0.0.0.0',
+    'FASTIFY_JWT_SECRET': 'secret',
+    'FASTIFY_JWT_EXPIRES_IN': '1h'
 }
+Object.keys(optionalVariables).forEach(variable => {
+    if (!process.env[variable]) {
+        console.log(`Environment variable ${variable} is not set, using default value: ${optionalVariables[variable]}`)
+        process.env[variable] = optionalVariables[variable]
+    }
+})
 
 // Logger
 const logger = winston.createLogger({
