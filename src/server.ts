@@ -65,11 +65,11 @@ const server: FastifyInstance = fastify({
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
     } as FastifyCorsOptions)
     .register(fastifyJwt, {
-        secret: process.env.JWT_SECRET || 'secret',
+        secret: process.env.JWT_SECRET,
         sign: {
             algorithm: 'HS256',
             iss: process.env.SITE_NAME_SHORT,
-            expiresIn: process.env.FASTIFY_JWT_EXPIRES_IN || '7d'
+            expiresIn: process.env.FASTIFY_JWT_EXPIRES_IN
         },
         verify: {
             algorithms: ['HS256'],
@@ -97,13 +97,13 @@ const prisma = new PrismaClient();
 // Run server
 try {
     server.listen({
-        port: process.env.SERVER_PORT || 3000,
-        host: process.env.SERVER_HOST || 'localhost'
+        port: process.env.SERVER_PORT,
+        host: process.env.SERVER_HOST
     } as FastifyListenOptions);
     logger.info(
-        `Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`
+        `Server listening on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`
     );
-    if (process.env.NODE_ENV === 'production') console.log(`Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`);
+    if (process.env.NODE_ENV === 'production') console.log(`Server listening on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`);
 } catch (err: unknown) {
     if (process.env.NODE_ENV === 'development') {
         logger.error(err);
