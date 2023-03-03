@@ -7,20 +7,32 @@ import { PrismaClient } from '@prisma/client';
 import winston from 'winston';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
+import * as dotenv from 'dotenv';
 
-// Verify all environment variables are set
-const requiredEnvVars = [
-    'NODE_ENV',
-    'DATABASE_URL',
-    'SITE_NAME',
-    'SITE_NAME_SHORT'
-];
+// load environment variables
+dotenv.config({
+    path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env'),
+});
 
-for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar]) {
-        throw new Error(`Environment variable ${envVar} is not set`);
+// Verify that the environment variables are set
+const requiredVariables = ['NODE_ENV', 'DATABASE_URL', 'SERVER_PORT', 'SITE_NAME', 'SITE_NAME_SHORT']
+requiredVariables.forEach(variable => {
+    if (!process.env[variable]) {
+        throw new Error(`Environment variable ${variable} is not set`)
     }
+})
+
+const optionalVariables: { [key: string]: string } = {
+    'SERVER_HOST': '0.0.0.0',
+    'FASTIFY_JWT_SECRET': 'secret',
+    'FASTIFY_JWT_EXPIRES_IN': '1h'
 }
+Object.keys(optionalVariables).forEach(variable => {
+    if (!process.env[variable]) {
+        console.log(`Environment variable ${variable} is not set, using default value: ${optionalVariables[variable]}`)
+        process.env[variable] = optionalVariables[variable]
+    }
+})
 
 // Logger
 const logger = winston.createLogger({
@@ -54,16 +66,16 @@ const server: FastifyInstance = fastify({
         timeWindow: 10000
     } as FastifyRateLimitOptions)
     .register(fastifyCors, {
-        origin: ['localhost:3000', `${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`, process.env.SITE_NAME],
+        origin: [`${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`, process.env.SITE_NAME],
         allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
     } as FastifyCorsOptions)
     .register(fastifyJwt, {
-        secret: process.env.JWT_SECRET || 'secret',
+        secret: process.env.FASTIFY_JWT_SECRET,
         sign: {
             algorithm: 'HS256',
             iss: process.env.SITE_NAME_SHORT,
-            expiresIn: process.env.FASTIFY_JWT_EXPIRES_IN || '7d'
+            expiresIn: process.env.FASTIFY_JWT_EXPIRES_IN
         },
         verify: {
             algorithms: ['HS256'],
@@ -91,13 +103,13 @@ const prisma = new PrismaClient();
 // Run server
 try {
     server.listen({
-        port: process.env.SERVER_PORT || 3000,
-        host: process.env.SERVER_HOST || 'localhost'
+        port: process.env.SERVER_PORT,
+        host: process.env.SERVER_HOST
     } as FastifyListenOptions);
     logger.info(
-        `Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`
+        `Server listening on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`
     );
-    if (process.env.NODE_ENV === 'production') console.log(`Server listening on http://${process.env.SERVER_HOST || 'localhost'}:${process.env.SERVER_PORT || 3000}`);
+    if (process.env.NODE_ENV === 'production') console.log(`Server listening on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`);
 } catch (err: unknown) {
     if (process.env.NODE_ENV === 'development') {
         logger.error(err);

@@ -8,30 +8,93 @@
 <h3 align="center">CodeShare backend, made with Fastify + Typescript 💙</h3>
 <hr>
 
-## How to run? 🧐
-First, cloning the repo!
+## Summary
+1. [Classic installation](#classic-installation)
+2. [Docker installation](#docker-installation)
+3. [Support](#support)
+
+## Classic installation
+### Requirements
+- [Node.js](https://nodejs.org/en/)
+- [MariaDB](https://mariadb.org/) or [MySQL](https://www.mysql.com/fr/)
+
+### 🪄 Installation
 ```shell
 git clone https://github.com/codeshare-project/server.git
+cd server
+npm install # or yarn install
 ```
-All good? Continue! 😉
-<details>
-<summary><h3>🤨 Houston, we have a problem "git: command not found" </h3></summary>
-If you don't have git installed, you can <a href="https://git-scm.com/">install</a> them, or just <a href="https://github.com/codeshare-project/Server/archive/refs/heads/main.zip">download</a> the zip file.
-</details>
 
-### ⚙️ Configuration! (Oh, nooo...)
-Don't worry, it's very simple! Just rename the file `.env.example` to `.env` and modify variables.
+### ⚙️ Configuration
+```shell
+cp .env.example .env
+```
+Then, edit the `.env` file with your favorite editor.
 
-### RUUUUUUN!!! 🏃‍♂️
-For a development environnement 💩
+### 🎉 Run
+Development mode:
 ```shell
-npm run dev
+npm run dev # or yarn dev
 ```
-or for a production environnment... 🫡
+Production mode:
 ```shell
-npm run build
-npm run start
+npm run build # or yarn build
+npm run start # or yarn start
 ```
-<br><br>
+
+## Docker installation
+### Requirements
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/) (optional)
+
+### Using docker 🐋
+You need a MariaDB or MySQL database.
+```shell
+sudo docker run -d --name codeshare-server -p 3000:3000 -e NODE_ENV=production -e DATABASE_URL="mysql://USERNAME:PASSWORD@HOST:PORT/DATABASE" -e SERVER_PORT=3000 -e SITE_NAME=https://mysite.com SITE_NAME_SHORT=mysite.com ghcr.io/codeshare-project/server:latest
+```
+
+### Using docker-compose
+```yaml
+services:
+  codeshare-server:
+    image: ghcr.io/codeshare-project/server:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL="mysql://myUser:changeMe@HOST:3306/codeshare"
+      - SERVER_PORT=3000
+      - SITE_NAME=https://mysite.com
+      - SITE_NAME_SHORT=mysite.com
+   
+  mariadb:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=superPassword
+      - MYSQL_DATABASE=codeshare
+      - MYSQL_USER=myUser
+      - MYSQL_PASSWORD=changeMe
+    volumes:
+      - data:/var/lib/mysql
+
+volumes:
+  data:
+  ```
+
+## Environment variables
+| Name | Description                        | Default value |
+|---|------------------------------------|---------------|
+| `NODE_ENV` | Node environment                   | ---           |
+| `DATABASE_URL` | Database URL                       | ---           |
+| `SERVER_PORT` | Server port                        | 3000          |
+| `SERVER_HOST` | Server host                        | 0.0.0.0       |
+| `SITE_NAME` | Site name                          | ---           |
+| `SITE_NAME_SHORT` | Site name short (without protocol) | ---           |
+| `FASTIFY_JWT_SECRET` | JWT secret                         | secret        |
+| `FASTIFY_JWT_EXPIRES_IN` | JWT expires in                     | 1h           |
+
+## Support 📞
 **📧 Contact:** <a href="mailto:codeshare-project@protonmail.com">codeshare-project@protonmail.com</a> <br>
 *Powered by [CodeShare](https://github.com/codeshare-project)*
