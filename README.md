@@ -95,6 +95,6 @@ volumes:
 | `FASTIFY_JWT_SECRET` | JWT secret                         | secret        |
 | `FASTIFY_JWT_EXPIRES_IN` | JWT expires in                     | 1h           |
 
-## Support 📞
+## Support
 **📧 Contact:** <a href="mailto:codeshare-project@protonmail.com">codeshare-project@protonmail.com</a> <br>
 *Powered by [CodeShare](https://github.com/codeshare-project)*
