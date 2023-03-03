@@ -7,6 +7,12 @@ import { PrismaClient } from '@prisma/client';
 import winston from 'winston';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
+import * as dotenv from 'dotenv';
+
+// load environment variables
+dotenv.config({
+    path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env'),
+});
 
 // Verify that the environment variables are set
 const requiredVariables = ['NODE_ENV', 'DATABASE_URL', 'SERVER_PORT', 'SITE_NAME', 'SITE_NAME_SHORT']
@@ -60,12 +66,12 @@ const server: FastifyInstance = fastify({
         timeWindow: 10000
     } as FastifyRateLimitOptions)
     .register(fastifyCors, {
-        origin: ['localhost:3000', `${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`, process.env.SITE_NAME],
+        origin: [`${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`, process.env.SITE_NAME],
         allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
     } as FastifyCorsOptions)
     .register(fastifyJwt, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.FASTIFY_JWT_SECRET,
         sign: {
             algorithm: 'HS256',
             iss: process.env.SITE_NAME_SHORT,
